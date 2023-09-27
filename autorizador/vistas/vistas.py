@@ -30,3 +30,16 @@ class VistaAutorizar(Resource):
                 return {"mensaje": "Inicio de sesión exitoso", "token": token, "id": usuarioExistenteConPassword.id}
 
         
+class VistaLogOut(Resource):
+    def post(self):
+        idUsuario = request.json["idUsuario"]
+        usuarioExistente = Usuario.query.filter(Usuario.id == idUsuario).first() #BUSCA SI YA HAY UN USUARIO CON ESE ID   
+        if usuarioExistente is None:
+            return "No existen usuarios con ese id"
+        else: # EL USUARIO SI EXISTE
+            if usuarioExistente.token != "":    #EL USUARIO TIENE UN TOKEN EN LA TABLA, ES DECIR, TIENE SESION ACTIVA
+                usuarioExistente.token = ""
+                db.session.commit()
+                return "Borrado " + usuarioExistente.token
+            else:
+                return "El usuario no tiene sesiones activas"
