@@ -30,23 +30,37 @@ class VistaAutorizar(Resource):
             if usuarioExistenteConPassword is None:
                 return {"mensaje": "contraseña incorrecta"}, 404
             else:
-                dateFormat = "%Y-%m-%d %H:%M:%S"
                 token = usuarioExistenteConPassword.token
-                tokenDecodedWithExpired = decode_token(encoded_token=token, allow_expired=True)
-                expDate = str(tokenDecodedWithExpired['expDate'])
-                hoyInDate = str(datetime.now())
-                cutHoyInDate = hoyInDate[:hoyInDate.rfind(".")]
-                cutExpInDate = expDate[:expDate.rfind(".")]
-                hoyInDateToCompare = datetime.strptime(cutHoyInDate, dateFormat)
-                ExpInDateToCompare = datetime.strptime(cutExpInDate, dateFormat)
-                if hoyInDateToCompare < ExpInDateToCompare:
+                if token == "":
+                    idNewUser = usuarioExistenteConPassword.id
+                    today = datetime.now()
+                    expDate = timedelta(minutes=5)
+                    additional_claims = {"expDate": str(today + expDate)}
+                    token = create_access_token(identity=idNewUser, additional_claims=additional_claims, expires_delta=expDate)
+                    usuarioExistenteConPassword.token = token
+                    db.session.commit()
                     return {
-                        "mensaje": "Ya hay un token activo, solo puedes tener una sesión activa a la vez, por favor cierra sesión para generar un nuevo token"
-                    }, 404
-                else:
-                    return {
-                        "mensaje": "el token ya expiro"
-                    }, 404
+                            "id": idNewUser,
+                            "usuario": usuarioExistenteConPassword.usuario,
+                            "token": token
+                        }
+                else:              
+                    dateFormat = "%Y-%m-%d %H:%M:%S"
+                    tokenDecodedWithExpired = decode_token(encoded_token=token, allow_expired=True)
+                    expDate = str(tokenDecodedWithExpired['expDate'])
+                    hoyInDate = str(datetime.now())
+                    cutHoyInDate = hoyInDate[:hoyInDate.rfind(".")]
+                    cutExpInDate = expDate[:expDate.rfind(".")]
+                    hoyInDateToCompare = datetime.strptime(cutHoyInDate, dateFormat)
+                    ExpInDateToCompare = datetime.strptime(cutExpInDate, dateFormat)
+                    if hoyInDateToCompare < ExpInDateToCompare:
+                        return {
+                            "mensaje": "Ya hay un token activo, solo puedes tener una sesión activa a la vez, por favor cierra sesión para generar un nuevo token"
+                        }, 404
+                    else:
+                        return {
+                            "mensaje": "el token ya expiro"
+                        }, 404
                     
                 
 class VistaLogOut(Resource):
