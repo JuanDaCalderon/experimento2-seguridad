@@ -32,9 +32,6 @@ class VistaAutorizar(Resource):
             else:
                 dateFormat = "%Y-%m-%d %H:%M:%S"
                 token = usuarioExistenteConPassword.token
-                return {"mensaje": "Inicio de sesión exitoso", "token": token, "id": usuarioExistenteConPassword.id}
-
-        
                 tokenDecodedWithExpired = decode_token(encoded_token=token, allow_expired=True)
                 expDate = str(tokenDecodedWithExpired['expDate'])
                 hoyInDate = str(datetime.now())
@@ -62,6 +59,6 @@ class VistaLogOut(Resource):
             if usuarioExistente.token != "":    #EL USUARIO TIENE UN TOKEN EN LA TABLA, ES DECIR, TIENE SESION ACTIVA
                 usuarioExistente.token = ""
                 db.session.commit()
-                return "Borrado " + usuarioExistente.token #SE BORRA EL TOKEN DE ESE USUARIO
+                return "Borrado " + usuarioExistente.token
             else:
                 return "El usuario no tiene sesiones activas"
