@@ -40,6 +40,6 @@ class VistaLogOut(Resource):
             if usuarioExistente.token != "":    #EL USUARIO TIENE UN TOKEN EN LA TABLA, ES DECIR, TIENE SESION ACTIVA
                 usuarioExistente.token = ""
                 db.session.commit()
-                return "Borrado " + usuarioExistente.token
+                return "Borrado " + usuarioExistente.token #SE BORRA EL TOKEN DE ESE USUARIO
             else:
                 return "El usuario no tiene sesiones activas"
