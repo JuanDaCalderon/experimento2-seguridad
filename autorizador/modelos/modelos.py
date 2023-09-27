@@ -6,3 +6,7 @@ class Usuario(db.Model):
     usuario = db.Column(db.String(50))
     password = db.Column(db.String(50))
     token = db.Column(db.String())
+    
+class ListaNegraTokens(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    token = db.Column(db.String())

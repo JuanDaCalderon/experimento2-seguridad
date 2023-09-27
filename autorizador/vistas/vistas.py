@@ -2,7 +2,7 @@ from flask import request
 from flask_jwt_extended import create_access_token, decode_token
 from flask_restful import Resource
 import hashlib
-from ..modelos import db, Usuario
+from ..modelos import db, Usuario, ListaNegraTokens
 from datetime import datetime, timedelta
 
 
@@ -57,6 +57,9 @@ class VistaLogOut(Resource):
             return "No existen usuarios con ese id"
         else: # EL USUARIO SI EXISTE
             if usuarioExistente.token != "":    #EL USUARIO TIENE UN TOKEN EN LA TABLA, ES DECIR, TIENE SESION ACTIVA
+                newTokenAListaNegra = ListaNegraTokens(token=usuarioExistente.token)
+                db.session.add(newTokenAListaNegra)
+                db.session.commit()
                 usuarioExistente.token = ""
                 db.session.commit()
                 return "Borrado " + usuarioExistente.token
