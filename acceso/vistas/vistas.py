@@ -6,7 +6,7 @@ from ..modelos import db, Menu, MenuSchema
 
 menu_schema =MenuSchema()
 class VistaAcceso(Resource):
-    jwt_required()
+    @jwt_required()
     def get(self):
         menus = Menu.query.all()
         return [menu_schema.dump(menu) for menu in menus]

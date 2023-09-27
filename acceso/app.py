@@ -1,4 +1,4 @@
-from autorizador import create_app
+from acceso import create_app
 from .modelos import db
 from flask_restful import Api
 from flask_cors import CORS
