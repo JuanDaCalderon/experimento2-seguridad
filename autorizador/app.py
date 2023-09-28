@@ -2,7 +2,7 @@ from autorizador import create_app
 from .modelos import db
 from flask_restful import Api
 from flask_cors import CORS
-from .vistas import VistaAutorizar
+from .vistas import VistaAutorizar, VistaLogOut
 from flask_jwt_extended import JWTManager
 
 app = create_app()
@@ -16,4 +16,5 @@ cors = CORS(app)
 
 api = Api(app)
 api.add_resource(VistaAutorizar, '/autorizar')
+api.add_resource(VistaLogOut, '/logout')
 jwt = JWTManager(app)
