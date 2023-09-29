@@ -38,4 +38,4 @@ class VistaDarAcceso(Resource):
             return respuestaAcceso.json()
             
         
-        return {"Mensaje": "Error"}
+        return {"Mensaje": "Error: El usuario ya cerró sesión"}
