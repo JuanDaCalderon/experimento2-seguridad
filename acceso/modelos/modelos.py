@@ -6,7 +6,7 @@ class Menu(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nombre = db.Column(db.String(50))
     url = db.Column(db.String(50))
-    progrma = db.Column(db.String())
+    programa = db.Column(db.String())
     
 class MenuSchema(SQLAlchemyAutoSchema):
     class Meta:

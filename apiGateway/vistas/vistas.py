@@ -19,6 +19,7 @@ class VistaDarAcceso(Resource):
         print("Aquí es token id", idTokenUsuario)
         tokenOriginalCompleto = request.headers.get('Authorization')
         tokenOriginal = tokenOriginalCompleto.split(' ')[1] if tokenOriginalCompleto else None
+        print(tokenOriginalCompleto)
         print(tokenOriginal)
 
         autorizador = "http://localhost:5001/verificar"
@@ -27,11 +28,14 @@ class VistaDarAcceso(Resource):
             "token": tokenOriginal
         }
         respuesta = requests.post(autorizador, json=data)
-
+        print("Aquí es la respuesta", respuesta.status_code)
+    
         if respuesta.status_code == 200:
             acceso = "http://localhost:5002/acceso"
             headers =  {"Content-Type":"application/json", "Authorization": f"Bearer {tokenOriginal}"}
-            respuestaAcceso = requests.get(acceso, json='', headers=headers)
+            respuestaAcceso = requests.get(acceso, headers=headers)
+            print("Aquí es respuesta acceso", respuestaAcceso)
             return respuestaAcceso.json()
+            
         
         return {"Mensaje": "Error"}
