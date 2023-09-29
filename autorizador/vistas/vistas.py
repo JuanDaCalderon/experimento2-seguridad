@@ -76,3 +76,32 @@ class VistaLogOut(Resource):
                 return "Borrado " + usuarioExistente.token
             else:
                 return "El usuario no tiene sesiones activas"
+            
+class VistaVerificarToken(Resource):
+    def post(self):
+        idUsuario = request.json["id"]
+        token = request.json["token"]
+        usuarioExistente = Usuario.query.filter(Usuario.id == idUsuario).first() # BUSCA EL USUARIO CON ESTE ID
+        if usuarioExistente is None:
+            return { "mensaje": "No hay usuario asociados a este id" }, 404
+        else:
+            usuarioExistenteConToken = Usuario.query.filter(Usuario.id == idUsuario, Usuario.token == token).first() # BUSCA EL USUARIO CON ESTE ID
+            if usuarioExistenteConToken is None:
+                return { "mensaje": "para este usuario, el token enviado ya no es valido" }, 404
+            else:
+                tokenFromUser = usuarioExistenteConToken.token
+                dateFormat = "%Y-%m-%d %H:%M:%S"
+                tokenDecodedWithExpired = decode_token(encoded_token=tokenFromUser, allow_expired=True)
+                expDate = str(tokenDecodedWithExpired['expDate'])
+                hoyInDate = str(datetime.now())
+                cutHoyInDate = hoyInDate[:hoyInDate.rfind(".")]
+                cutExpInDate = expDate[:expDate.rfind(".")]
+                hoyInDateToCompare = datetime.strptime(cutHoyInDate, dateFormat)
+                ExpInDateToCompare = datetime.strptime(cutExpInDate, dateFormat)
+                if hoyInDateToCompare < ExpInDateToCompare:
+                    return { "mensaje": "El token esta activo y es valido" }
+                else:
+                    return {
+                        "mensaje": "el token ya expiro y es invalido"
+                    }, 404
+                
